@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.flipkart.logistics.models.DocumentCategory" table="document_category">
+        <meta attribute="class-description">
+            This class contains the categories of documents.
+        </meta>
+        <id name="document_category_code" type="long" column="document_category_code">
+            <generator class="native"/>
+        </id>
+        <property name="document_category" column="document_category" type="string"/>
+    </class>
+</hibernate-mapping>

@@ -4,14 +4,13 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="com.flipkart.logistics.models.MerchantDetails" table="merchant_details">
+    <class name="com.flipkart.logistics.models.Document" table="document">
         <meta attribute="class-description">
-            This class contains the employee detail.
+            This class contains the list of documents.
         </meta>
-        <id name="id" type="int" column="id">
+        <id name="id" type="long" column="id">
             <generator class="native"/>
         </id>
         <property name="name" column="name" type="string"/>
-        <property name="age" column="age" type="int"/>
     </class>
 </hibernate-mapping>

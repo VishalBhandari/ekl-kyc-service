@@ -11,6 +11,10 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="show_sql">true</property>
-        <mapping resource="MerchantDetails.hbm.xml"></mapping>
+        <mapping resource="Merchant.hbm.xml"></mapping>
+        <mapping resource="Category.hbm.xml"></mapping>
+      <!--  <mapping resource="Document.hbm.xml"></mapping> -->
+      <!--  <mapping resource="DocumentCategory.hbm.xml"></mapping> -->
+        <mapping resource="MerchantCategoryMapping.hbm.xml"></mapping>
     </session-factory>
 </hibernate-configuration>
