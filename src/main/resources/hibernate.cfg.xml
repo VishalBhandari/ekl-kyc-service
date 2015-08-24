@@ -13,8 +13,8 @@
         <property name="show_sql">true</property>
         <mapping resource="Merchant.hbm.xml"></mapping>
         <mapping resource="Category.hbm.xml"></mapping>
+        <mapping resource="Service.hbm.xml"></mapping>
       <!--  <mapping resource="Document.hbm.xml"></mapping> -->
       <!--  <mapping resource="DocumentCategory.hbm.xml"></mapping> -->
-        <mapping resource="MerchantCategoryMapping.hbm.xml"></mapping>
     </session-factory>
 </hibernate-configuration>

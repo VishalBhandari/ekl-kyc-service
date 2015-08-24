@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.logistics.models.Category;
 import com.flipkart.logistics.models.Merchant;
-import com.flipkart.logistics.models.MerchantCategoryMapping;
-import com.flipkart.logistics.services.CategoryService;
-import com.flipkart.logistics.services.MerchantCategoryMappingService;
-import com.flipkart.logistics.services.OnboardingMerchantService;
+import com.flipkart.logistics.models.Service;
+import com.flipkart.logistics.services.CategoryHelper;
+import com.flipkart.logistics.services.OnboardingMerchantHelper;
+import com.flipkart.logistics.services.ServiceHelper;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 
 
@@ -35,8 +36,10 @@ public class OnboardingMerchantController {
 
         JsonNode statusNode = bodyNode.findValue("name");
         String value = statusNode.textValue();
+        HashSet<Category> categories = new HashSet<Category>();
+        HashSet<Service> services = new HashSet<Service>();
 
-        Object obj= new OnboardingMerchantService().getMerchantByName(value);
+        Object obj= new OnboardingMerchantHelper().getMerchantByName(value);
         if (obj == null) {
 
             Merchant md = new Merchant();
@@ -57,23 +60,33 @@ public class OnboardingMerchantController {
             md.setCountry(statusNode.textValue());
             statusNode = bodyNode.findValue("pincode");
             md.setPinCode(statusNode.textValue());
-            md.setId(new OnboardingMerchantService().addMerchanttoDb(md));
             statusNode = bodyNode.findValue("category");
             Iterator<JsonNode> iterator = statusNode.elements();
             while (iterator.hasNext()) {
                 statusNode = iterator.next();
-                String category = statusNode.textValue();
-                CategoryService cs = new CategoryService();
-                Category c = cs.getCategoryByName(category);
-                MerchantCategoryMapping mcm = new MerchantCategoryMapping();
-                mcm.setId(0L);
-                mcm.setMerchantId(md.getId());
-                mcm.setCategory(c);
-                new MerchantCategoryMappingService().addMerchantCategoryMappingtoDb(mcm);
-                System.out.println("djdjhd" +mcm.getId());
+                String category_name = statusNode.textValue();
+                Category c = new CategoryHelper().getCategoryByName(category_name);
+                if(c!=null)
+                {
+                    categories.add(c);
+                }
+                md.setCategory(categories);
             }
-            System.out.println(md.getId());
 
+            statusNode = bodyNode.findValue("service");
+            iterator = statusNode.elements();
+            while (iterator.hasNext()) {
+                statusNode = iterator.next();
+                String service_name = statusNode.textValue();
+                Service c = new ServiceHelper().getServiceByName(service_name);
+                if(c!=null)
+                {
+                    services.add(c);
+                }
+                md.setService(services);
+            }
+
+            new OnboardingMerchantHelper().addMerchanttoDb(md);
         }
         return Response.status(Response.Status.OK).build();
     }

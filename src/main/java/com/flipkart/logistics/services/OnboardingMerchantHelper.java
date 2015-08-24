@@ -8,7 +8,7 @@ import org.hibernate.criterion.Restrictions;
 /**
  * Created by vishal.bhandari on 20/08/15.
  */
-public class OnboardingMerchantService {
+public class OnboardingMerchantHelper {
 
     private SessionFactory factory;
 

@@ -5,7 +5,17 @@ package com.flipkart.logistics.models;
  */
 public class Service {
     private Long id;
-    private String service_type;
+    private String serviceType;
+
+    public static final String SERVICE_TYPE = "serviceType";
+
+    public Service()
+    {
+
+    }
+    public Service(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
     public Long getId() {
         return id;
@@ -15,11 +25,11 @@ public class Service {
         this.id = id;
     }
 
-    public String getService_type() {
-        return service_type;
+    public String getServiceType() {
+        return serviceType;
     }
 
-    public void setService_type(String service_type) {
-        this.service_type = service_type;
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 }

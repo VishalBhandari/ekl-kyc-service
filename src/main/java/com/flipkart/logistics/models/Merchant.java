@@ -21,16 +21,23 @@ public class Merchant {
     private String pinCode;
     private String create_datetime;
     private String update_datetime;
-    private Set<MerchantCategoryMapping> merchantCategoryMappingSet;
-    private Set<MerchantServiceMapping>  merchantServiceMappingSet;
-    private Set<MerchantDocumentMapping> merchantDocumentMappingSet;
+    private Set<Category> category;
+    private Set<Service>  service;
+
+    public Set<Service> getService() {
+        return service;
+    }
+
+    public void setService(Set<Service> service) {
+        this.service = service;
+    }
 
     public Merchant()
     {
 
     }
 
-    public Merchant(String name, String phone, String email, String address1, String address2, String city, String state, String country, String pinCode, String create_datetime, String update_datetime, Set<MerchantCategoryMapping> merchantCategoryMappingSet, Set<MerchantServiceMapping> merchantservicemappingSet, Set<MerchantDocumentMapping> merchantdocumentmappingSet) {
+    public Merchant(String name, String phone, String email, String address1, String address2, String city, String state, String country, String pinCode, String create_datetime, String update_datetime) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -42,33 +49,14 @@ public class Merchant {
         this.pinCode = pinCode;
         this.create_datetime = create_datetime;
         this.update_datetime = update_datetime;
-        this.merchantCategoryMappingSet = merchantCategoryMappingSet;
-        this.merchantServiceMappingSet = merchantservicemappingSet;
-        this.merchantDocumentMappingSet = merchantdocumentmappingSet;
     }
 
-    public Set<MerchantCategoryMapping> getMerchantCategoryMappingSet() {
-        return merchantCategoryMappingSet;
+    public Set getCategory() {
+        return category;
     }
 
-    public void setMerchantCategoryMappingSet(Set<MerchantCategoryMapping> merchant_category_mappingSet) {
-        this.merchantCategoryMappingSet = merchant_category_mappingSet;
-    }
-
-    public Set<MerchantServiceMapping> getMerchant_service_mappingSet() {
-        return merchantServiceMappingSet;
-    }
-
-    public void setMerchant_service_mappingSet(Set<MerchantServiceMapping> merchant_service_mappingSet) {
-        this.merchantServiceMappingSet = merchant_service_mappingSet;
-    }
-
-    public Set<MerchantDocumentMapping> getMerchant_document_mappingSet() {
-        return merchantDocumentMappingSet;
-    }
-
-    public void setMerchant_document_mappingSet(Set<MerchantDocumentMapping> merchant_document_mappingSet) {
-        this.merchantDocumentMappingSet = merchant_document_mappingSet;
+    public void setCategory(Set category) {
+        this.category = category;
     }
 
 

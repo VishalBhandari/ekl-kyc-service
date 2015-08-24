@@ -1,6 +1,7 @@
 package com.flipkart.logistics.services;
 
 import com.flipkart.logistics.models.Category;
+import com.flipkart.logistics.models.Service;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,12 +10,11 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 
 /**
- * Created by vishal.bhandari on 21/08/15.
+ * Created by vishal.bhandari on 22/08/15.
  */
-public class CategoryService {
-
+public class ServiceHelper {
     private SessionFactory factory = null;
-    public Category getCategoryByName(String name)    {
+    public Service getServiceByName(String name)    {
         try {
             //factory = new Configuration().configure().buildSessionFactory();
 
@@ -33,8 +33,8 @@ public class CategoryService {
         }
 
         Session session = factory.openSession();
-        Criteria c = session.createCriteria(Category.class);
-        c.add(Restrictions.eq(Category.CATEGORY_TYPE, name));
-        return (Category) c.uniqueResult();
+        Criteria c = session.createCriteria(Service.class);
+        c.add(Restrictions.eq(Service.SERVICE_TYPE, name));
+        return (Service) c.uniqueResult();
     }
 }

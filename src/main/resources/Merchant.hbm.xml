@@ -23,15 +23,15 @@
         <property name="create_datetime" column="create_datetime" type="string"/>
         <property name="update_datetime" column="update_datetime" type="string"/>
 
-        <set name="merchantCategoryMappingSet" cascade="all">
+        <set name="category" cascade="all" table="merchant_category_mapping">
             <key column="merchant_id"></key>
-            <one-to-many class="com.flipkart.logistics.models.MerchantCategoryMapping"/>
+            <many-to-many column="category_id" class="com.flipkart.logistics.models.Category"/>
+        </set>
+        <set name="service" cascade="all" table="merchant_service_mapping">
+            <key column="merchant_id"></key>
+            <many-to-many column="service_id" class="com.flipkart.logistics.models.Service"/>
         </set>
         <!--
-       <set name="merchant_service_mappingList" cascade="all">
-            <key column="merchant_id"></key>
-            <one-to-many class="com.flipkart.logistics.models.Merchant_Service_Mapping"/>
-        </set>
         <set name="merchant_document_mappingList" cascade="all">
             <key column="merchant_id"></key>
             <one-to-many class="com.flipkart.logistics.models.Merchant_Document_Mapping"/>

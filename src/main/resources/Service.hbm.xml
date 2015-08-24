@@ -11,6 +11,6 @@
         <id name="id" type="long" column="id">
             <generator class="native"/>
         </id>
-        <property name="service_type" column="service_type" type="string"/>
+        <property name="serviceType" column="service_type" type="string"/>
     </class>
 </hibernate-mapping>

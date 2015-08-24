@@ -13,8 +13,7 @@ public class Category {
     {
 
     }
-    public Category(Long id, String categoryType) {
-        this.id = id;
+    public Category(String categoryType) {
         this.categoryType = categoryType;
     }
 
