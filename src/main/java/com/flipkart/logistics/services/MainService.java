@@ -1,6 +1,7 @@
 package com.flipkart.logistics.services;
 
 import com.flipkart.logistics.controllers.OnboardingMerchantController;
+import com.flipkart.logistics.controllers.RequestController;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -25,5 +26,7 @@ public class MainService extends Service<ConfigurationService> {
     @Override
     public void run(ConfigurationService configuration, Environment environment) throws Exception {
         environment.addResource(new OnboardingMerchantController());
+        environment.addResource(new RequestController());
+
     }
 }

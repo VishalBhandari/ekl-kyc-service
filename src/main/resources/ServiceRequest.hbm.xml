@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.flipkart.logistics.models.ServiceRequest" table="service_request">
+        <meta attribute="class-description">
+            This class contains the list of documents.
+        </meta>
+        <id name="id" type="long" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="merchantRefId" column="merchant_ref_id" type="long"/>
+        <property name="customerJson" column="customer_json" type="string"/>
+        <property name="serviceJson" column="service_json" type="string"/>
+        <property name="categoryJson" column="category_json" type="string"/>
+        <property name="etaJson" column="eta_json" type="string"/>
+        <property name="requestRefId" column="request_ref_id" type="long"/>
+
+    </class>
+</hibernate-mapping>

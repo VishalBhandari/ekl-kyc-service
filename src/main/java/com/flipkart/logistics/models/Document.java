@@ -5,7 +5,19 @@ package com.flipkart.logistics.models;
  */
 public class Document {
     private Long id;
+    private String doc_type;
     private String name;
+
+    public String getDocType() {
+        return doc_type;
+    }
+
+    public void setDocType(String doc_type) {
+        this.doc_type = doc_type;
+    }
+
+
+
     public Document()
     {
 
