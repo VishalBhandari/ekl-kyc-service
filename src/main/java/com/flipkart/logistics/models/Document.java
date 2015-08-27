@@ -4,27 +4,20 @@ package com.flipkart.logistics.models;
  * Created by vishal.bhandari on 19/08/15.
  */
 public class Document {
+
     private Long id;
-    private String doc_type;
-    private String name;
-
-    public String getDocType() {
-        return doc_type;
-    }
-
-    public void setDocType(String doc_type) {
-        this.doc_type = doc_type;
-    }
-
+    private String docType;
+    private String docName;
 
 
     public Document()
     {
 
     }
-    public Document(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public Document(String docType, String docName) {
+
+        this.docType = docType;
+        this.docName = docName;
     }
 
     public Long getId() {
@@ -35,11 +28,19 @@ public class Document {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDocType() {
+        return docType;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDocType(String docType) {
+        this.docType = docType;
+    }
+
+    public String getDocName() {
+        return docName;
+    }
+
+    public void setDocName(String docName) {
+        this.docName = docName;
     }
 }

@@ -1,5 +1,6 @@
 package com.flipkart.logistics.models;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -7,12 +8,12 @@ import java.util.Set;
  */
 public class Request {
     private long id;
-    private ServiceRequest sr;
-    private Service service;
-    private Category category;
+     private ServiceRequest sr;
+     private Service service;
+     private Category category;
     private String eta;
-    private Merchant merchant;
-    private Set<Document> document;
+     private Merchant merchant;
+     private Set<Document> document;
 
     public long getId() {
         return id;
@@ -46,6 +47,7 @@ public class Request {
         this.category = category;
     }
 
+
     public String getEta() {
         return eta;
     }
@@ -69,4 +71,5 @@ public class Request {
     public void setDocument(Set<Document> document) {
         this.document = document;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.flipkart.logistics.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.logistics.models.Category;
@@ -9,9 +10,7 @@ import com.flipkart.logistics.services.CategoryHelper;
 import com.flipkart.logistics.services.OnboardingMerchantHelper;
 import com.flipkart.logistics.services.ServiceHelper;
 
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -90,4 +89,16 @@ public class OnboardingMerchantController {
         }
         return Response.status(Response.Status.OK).build();
     }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getMerchant/merchantId/{merchantId}")
+    public Response getMerchant( @PathParam("merchantId") Long merchantId) throws JsonProcessingException {
+
+        Merchant merchant = new OnboardingMerchantHelper().getMerchantById(merchantId);
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(merchant);
+        return Response.status(Response.Status.OK).entity(jsonString).build();
+    }
+
 }

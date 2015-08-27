@@ -48,4 +48,17 @@ public class OnboardingMerchantHelper {
         }
         return merchant_id;
     }
+
+    public Merchant getMerchantById(Long merchantId)    {
+        try {
+            factory = new Configuration().configure().buildSessionFactory();
+        } catch (Throwable ex) {
+            System.err.println("Failed to create sessionFactory object." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+        Session session = factory.openSession();
+        Criteria c = session.createCriteria(Merchant.class);
+        c.add(Restrictions.eq("id", merchantId));
+        return (Merchant) c.uniqueResult();
+    }
 }

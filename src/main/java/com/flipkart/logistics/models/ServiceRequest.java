@@ -1,5 +1,7 @@
 package com.flipkart.logistics.models;
 
+import java.io.Serializable;
+
 /**
  * Created by vishal.bhandari on 24/08/15.
  */
@@ -9,9 +11,9 @@ public class ServiceRequest {
     private long merchantRefId;
     private long requestRefId;
     private String customerJson;
-    private String serviceJson;
-    private String categoryJson;
-    private String etaJson;
+    private String service;
+    private String category;
+    private String eta;
     private String docJson;
 
 
@@ -25,9 +27,9 @@ public class ServiceRequest {
 
         this.merchantRefId = merchant_ref_id;
         this.customerJson = customer_json;
-        this.serviceJson = service_json;
-        this.categoryJson = category_json;
-        this.etaJson = eta_json;
+        this.service = service_json;
+        this.category = category_json;
+        this.eta = eta_json;
         this.docJson = doc_json;
     }
 
@@ -67,28 +69,28 @@ public class ServiceRequest {
         this.customerJson = customer_json;
     }
 
-    public String getServiceJson() {
-        return serviceJson;
+    public String getService() {
+        return service;
     }
 
-    public void setServiceJson(String service_json) {
-        this.serviceJson = service_json;
+    public void setService(String service) {
+        this.service = service;
     }
 
-    public String getCategoryJson() {
-        return categoryJson;
+    public String getCategory() {
+        return category;
     }
 
-    public void setCategoryJson(String category_json) {
-        this.categoryJson = category_json;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getEtaJson() {
-        return etaJson;
+    public String getEta() {
+        return eta;
     }
 
-    public void setEtaJson(String eta_json) {
-        this.etaJson = eta_json;
+    public void setEta(String eta) {
+        this.eta = eta;
     }
 
     public String getDocJson() {

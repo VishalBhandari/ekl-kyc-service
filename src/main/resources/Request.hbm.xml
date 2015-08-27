@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.flipkart.logistics.models.Request" table="request">
+        <meta attribute="class-description">
+            This class contains the employee detail.
+        </meta>
+        <id name="id" type="long" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="eta" column="eta" type="string"/>
+       <many-to-one name="service" column="service_id" unique="true" lazy="false"
+                     class="com.flipkart.logistics.models.Service"/>
+        <many-to-one name="category" column="category_id" unique="true" lazy="false"
+                     class="com.flipkart.logistics.models.Category"/>
+        <set name="document" cascade="all" table="document_request_mapping">
+            <key column="request_id"></key>
+            <many-to-many column="doc_id" lazy ="false" class="com.flipkart.logistics.models.Document"/>
+        </set>
+        <many-to-one name="sr" column="request_id" unique="true" lazy="false"
+                     class="com.flipkart.logistics.models.ServiceRequest"/>
+       <many-to-one name="merchant" column="merchant_id" unique="true" lazy="false"
+                     class="com.flipkart.logistics.models.Merchant"/>
+
+
+    </class>
+</hibernate-mapping>
