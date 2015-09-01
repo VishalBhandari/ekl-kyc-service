@@ -7,13 +7,31 @@ import java.util.Set;
  * Created by vishal.bhandari on 24/08/15.
  */
 public class Request {
-    private long id;
+     private long id;
      private ServiceRequest sr;
      private Service service;
      private Category category;
-    private String eta;
+     private String eta;
      private Merchant merchant;
      private Set<Document> document;
+     private String status;
+     private Customer customer;
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public long getId() {
         return id;

@@ -75,17 +75,38 @@ public class RequestController {
         statusNode = bodyNode.findValue("eta");
         String eta = statusNode.textValue();
 
+        Customer customer = new Customer();
+        JsonNode bodyNodeTemp = bodyNode.findValue("customer_json");
+        statusNode = bodyNodeTemp.findValue("name");
+        customer.setName(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("phone");
+        customer.setPhone(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("email");
+        customer.setEmail(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("address1");
+        customer.setAddress1(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("address2");
+        customer.setAddress2(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("city");
+        customer.setCity(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("state");
+        customer.setState(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("country");
+        customer.setCountry(statusNode.textValue());
+        statusNode = bodyNodeTemp.findValue("pincode");
+        customer.setPinCode(statusNode.textValue());
+
         statusNode = bodyNode.findValue("doc_json");
         Iterator<JsonNode> iterator1 = statusNode.elements();
         Document doc;
         HashSet<Document> documents = new HashSet<Document>();
 
         while (iterator1.hasNext()) {
-            bodyNode = iterator1.next();
-            statusNode = bodyNode.findValue("doc_type");
+            bodyNodeTemp = iterator1.next();
+            statusNode = bodyNodeTemp.findValue("doc_type");
             String doc_type = statusNode.textValue();
 
-            statusNode = bodyNode.findValue("document");
+            statusNode = bodyNodeTemp.findValue("document");
             Iterator<JsonNode> iterator2 = statusNode.elements();
 
             while(iterator2.hasNext())
@@ -97,13 +118,16 @@ public class RequestController {
             }
 
         }
+
+
         req.setDocument(documents);
          req.setCategory(category);
         req.setService(service);
         req.setEta(eta);
         req.setSr(sr);
         req.setMerchant(merchant);
-
+        req.setStatus("PENDING");
+        req.setCustomer(customer);
         new RequestHelper().addRequesttoDb(req);
     }
 

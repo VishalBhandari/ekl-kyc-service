@@ -50,4 +50,20 @@ public class RequestHelper {
         return (Request) c.uniqueResult();
     }
 
+    public Request getPendingRequest()
+    {
+        try
+        {
+            factory = new Configuration().configure().buildSessionFactory();
+        }catch (Throwable ex)
+        {
+            System.err.println("Failed to create sessionFactory object." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+        Session session = factory.openSession();
+        Criteria c = session.createCriteria(Request.class);
+        c.add(Restrictions.eq("status", "PENDING"));
+        return (Request) c.uniqueResult();
+
+    }
 }
