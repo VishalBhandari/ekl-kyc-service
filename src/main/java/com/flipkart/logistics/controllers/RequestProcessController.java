@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.flipkart.logistics.client.HttpClientHelper;
 import com.flipkart.logistics.models.*;
+import com.flipkart.logistics.services.AttributeHelper;
 import com.flipkart.logistics.services.RequestHelper;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.LineFormatter;
 import org.apache.http.params.HttpParams;
 import org.eclipse.jetty.util.ajax.JSON;
 
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -38,8 +41,11 @@ public class RequestProcessController {
 
     public Response processRequest() throws IOException {
 
-        Request request = new RequestHelper().getPendingRequest();
-        if (request != null) {
+        List<Request> requestList = new RequestHelper().getPendingRequest();
+        String newShipmentId;
+
+        for(Request request:requestList)
+         {
 
             ShipmentAttributeJsonModel shipmentAttribute = new ShipmentAttributeJsonModel("priority_value", "NON-PRIORITY");
             ShipmentItemJsonModel shipmentItem = new ShipmentItemJsonModel("passport", "id_proof");
@@ -59,26 +65,32 @@ public class RequestProcessController {
             shipment.setShipmentType("RVP");
             shipment.setPickupType("PICKUP_ONLY");
             shipment.setShipmenttype("Incoming");
-            shipment.setShipmentId("DOC0000005");
-            shipment.setOrderId("DOC0000005");
-            shipment.setExternalTrackingId("DOC0000005");
-            shipment.setDeliveryCustomerAddress1("18, Middle street, ABC City");
-            shipment.setDeliveryCustomerAddress2("18, Middle street, ABC City");
-            shipment.setDeliveryCustomerCity("Bangalore");
-            shipment.setDeliveryCustomerCountry("INDIA");
-            shipment.setDeliveryCustomerEmail("ekl.dev@ekl.com");
-            shipment.setDeliveryCustomerName("Anshul G");
-            shipment.setDeliveryCustomerPhone("9535528878");
-            shipment.setDeliveryCustomerPincode("282001");
-            shipment.setDeliveryCustomerState("Karnataka");
 
-            shipment.setShippingCustomerAddress1("FKL facility, Chennai");
-            shipment.setShippingCustomerCity("Chennai");
-            shipment.setShippingCustomerCountry("Ind");
-            shipment.setShippingCustomerName("Flipkart Chennai");
-            shipment.setShippingCustomerPincode("342001");
-            shipment.setShippingCustomerState("TamilNadu");
-            shipment.setShippingCustomerEmail("test@gmail.com");
+             newShipmentId = new AttributeHelper().getNewShipmentId("shipmentIDLatestValue");
+
+
+             shipment.setShipmentId(newShipmentId);
+            shipment.setOrderId(newShipmentId);
+            shipment.setExternalTrackingId(newShipmentId);
+
+            shipment.setDeliveryCustomerAddress1(request.getCustomer().getAddress1());
+            shipment.setDeliveryCustomerAddress2(request.getCustomer().getAddress2());
+            shipment.setDeliveryCustomerCity(request.getCustomer().getCity());
+            shipment.setDeliveryCustomerCountry(request.getCustomer().getCountry());
+            shipment.setDeliveryCustomerEmail(request.getCustomer().getEmail());
+            shipment.setDeliveryCustomerName(request.getCustomer().getName());
+            shipment.setDeliveryCustomerPhone(request.getCustomer().getPhone());
+            shipment.setDeliveryCustomerPincode(request.getCustomer().getPinCode());
+            shipment.setDeliveryCustomerState(request.getCustomer().getState());
+
+            shipment.setShippingCustomerAddress1(request.getMerchant().getAddress1());
+            shipment.setShippingCustomerCity(request.getMerchant().getCity());
+            shipment.setShippingCustomerCountry(request.getMerchant().getCountry());
+            shipment.setShippingCustomerName(request.getMerchant().getName());
+            shipment.setShippingCustomerPincode(request.getMerchant().getPinCode());
+            shipment.setShippingCustomerState(request.getMerchant().getState());
+            shipment.setShippingCustomerEmail(request.getMerchant().getEmail());
+
             shipment.setOriginLocationName("fkl-bangalore");
 
 
@@ -93,6 +105,12 @@ public class RequestProcessController {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+
+             if(response.getStatusLine().getStatusCode() == 201)
+             {
+                 //request.setStatus("WIP");
+                 new RequestHelper().setStatusAsProcessed(request);
+             }
 
         }
         return Response.status(Response.Status.OK).build();

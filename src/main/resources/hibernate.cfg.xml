@@ -18,6 +18,6 @@
         <mapping resource="Request.hbm.xml"></mapping>
         <mapping resource="Document.hbm.xml"></mapping>
         <mapping resource="Customer.hbm.xml"></mapping>
-
+        <mapping resource="Attribute.hbm.xml"></mapping>
     </session-factory>
 </hibernate-configuration>

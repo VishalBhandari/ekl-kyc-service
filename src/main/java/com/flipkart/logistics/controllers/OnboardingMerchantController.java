@@ -24,7 +24,7 @@ import java.util.Iterator;
 @Path("/flipkart/onboarding")
 public class OnboardingMerchantController {
 
-    @PUT
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/create-merchant")
 

@@ -22,7 +22,7 @@ import java.util.Set;
 @Path("/flipkart/request")
 public class RequestController {
 
-    @PUT
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/create-request")
 
