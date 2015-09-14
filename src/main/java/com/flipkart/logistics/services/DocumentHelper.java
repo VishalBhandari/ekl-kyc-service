@@ -17,7 +17,7 @@ import java.util.Set;
 public class DocumentHelper {
 
     private SessionFactory factory;
-    public Set<Document> getDocumentListById(Long RequestId)    {
+    public Set<Document> getDocumentListById(String requestReferenceId)    {
         try {
             factory = new Configuration().configure().buildSessionFactory();
         } catch (Throwable ex) {
@@ -26,8 +26,10 @@ public class DocumentHelper {
         }
         Session session = factory.openSession();
         Criteria c = session.createCriteria(Request.class);
-        c.add(Restrictions.eq("id", RequestId));
+        c.add(Restrictions.eq("requestReferenceId", requestReferenceId));
         Request req = (Request)c.uniqueResult();
+        if(req == null || req.getActive() == 0)
+            return null;
         return req.getDocument();
     }
 }

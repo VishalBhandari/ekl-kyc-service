@@ -13,9 +13,6 @@ public class ShipmentItemJsonModel {
     private String type;
     private String instruction;
 
-
-
-
      public String getDescription() {
         return description;
     }

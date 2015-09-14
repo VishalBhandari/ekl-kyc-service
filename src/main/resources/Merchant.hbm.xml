@@ -20,22 +20,18 @@
         <property name="state" column="state" type="string"/>
         <property name="country" column="country" type="string"/>
         <property name="pinCode" column="pincode" type="string"/>
-        <property name="create_datetime" column="create_datetime" type="string"/>
-        <property name="update_datetime" column="update_datetime" type="string"/>
+        <property name="createDateTime" column="create_datetime" type="string"/>
+        <property name="updateDateTime" column="update_datetime" type="string"/>
+        <property name="merchantReferenceId" column="merchant_reference_id" type="string"/>
+        <property name="active" column="active" type="int"/>
 
-        <set name="category" cascade="all" table="merchant_category_mapping">
+        <set name="category" cascade="all" table="merchant_category_mapping" lazy="false">
             <key column="merchant_id"></key>
             <many-to-many column="category_id" class="com.flipkart.logistics.models.Category"/>
         </set>
-        <set name="service" cascade="all" table="merchant_service_mapping">
+        <set name="service" cascade="all" table="merchant_service_mapping" lazy="false">
             <key column="merchant_id"></key>
-            <many-to-many column="service_id" class="com.flipkart.logistics.models.Service"/>
+            <many-to-many column="service_id" class="com.flipkart.logistics.models.Service" />
         </set>
-        <!--
-        <set name="merchant_document_mappingList" cascade="all">
-            <key column="merchant_id"></key>
-            <one-to-many class="com.flipkart.logistics.models.Merchant_Document_Mapping"/>
-        </set>
-        -->
     </class>
 </hibernate-mapping>

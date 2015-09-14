@@ -11,13 +11,9 @@
         <id name="id" type="long" column="id">
             <generator class="native"/>
         </id>
-        <property name="merchantRefId" column="merchant_ref_id" type="long"/>
-        <property name="customerJson" column="customer_json" type="string"/>
-        <property name="service" column="service" type="string"/>
+        <property name="merchantReferenceId" column="merchant_ref_id" type="string"/>
         <property name="category" column="category" type="string"/>
-        <property name="eta" column="eta" type="string"/>
-        <property name="docJson" column="doc_json" type="string"></property>
-        <property name="requestRefId" column="request_ref_id" type="long"/>
+        <property name="request" column="request" type="string"/>
 
     </class>
 </hibernate-mapping>

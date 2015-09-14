@@ -11,8 +11,11 @@
         <id name="id" type="long" column="id">
             <generator class="native"/>
         </id>
-        <property name="eta" column="eta" type="string"/>
+        <property name="expectedBy" column="expected_by" type="string"/>
         <property name="status" column="status" type="string"/>
+        <property name="retryCount" column="retry_count" type="long"/>
+        <property name="requestReferenceId" column="request_reference_id" type="string"></property>
+        <property name="active" column="active" type="int"></property>
         <many-to-one name="service" column="service_id" unique="true" lazy="false"
                      class="com.flipkart.logistics.models.Service"/>
         <many-to-one name="category" column="category_id" unique="true" lazy="false"
@@ -21,7 +24,7 @@
             <key column="request_id"></key>
             <many-to-many column="doc_id" lazy ="false" class="com.flipkart.logistics.models.Document"/>
         </set>
-        <many-to-one name="sr" column="request_id" unique="true" lazy="false"
+        <many-to-one name="sr" column="service_request_id" unique="true" lazy="false"
                      class="com.flipkart.logistics.models.ServiceRequest"/>
        <many-to-one name="merchant" column="merchant_id" unique="false" lazy="false"
                      class="com.flipkart.logistics.models.Merchant"/>

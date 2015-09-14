@@ -11,11 +11,38 @@ public class Request {
      private ServiceRequest sr;
      private Service service;
      private Category category;
-     private String eta;
+     private String expectedBy;
      private Merchant merchant;
      private Set<Document> document;
      private String status;
      private Customer customer;
+     private long retryCount;
+     private String requestReferenceId;
+     private int active;
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
+    public String getRequestReferenceId() {
+        return requestReferenceId;
+    }
+
+    public void setRequestReferenceId(String requestReferenceId) {
+        this.requestReferenceId = requestReferenceId;
+    }
+
+    public long getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(long retryCount) {
+        this.retryCount = retryCount;
+    }
 
     public Customer getCustomer() {
         return customer;
@@ -66,12 +93,12 @@ public class Request {
     }
 
 
-    public String getEta() {
-        return eta;
+    public String getExpectedBy() {
+        return expectedBy;
     }
 
-    public void setEta(String eta) {
-        this.eta = eta;
+    public void setExpectedBy(String expectedBy) {
+        this.expectedBy = expectedBy;
     }
 
     public Merchant getMerchant() {

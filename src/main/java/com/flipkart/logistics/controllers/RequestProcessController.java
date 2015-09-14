@@ -43,53 +43,55 @@ public class RequestProcessController {
 
         List<Request> requestList = new RequestHelper().getPendingRequest();
         String newShipmentId;
+        ArrayList<ShipmentItemJsonModel> shipmentItemList = new ArrayList<ShipmentItemJsonModel>();
+        ArrayList<ShipmentAttributeJsonModel> shipmentAttributeList = new ArrayList<ShipmentAttributeJsonModel>();
 
         for(Request request:requestList)
          {
 
-            ShipmentAttributeJsonModel shipmentAttribute = new ShipmentAttributeJsonModel("priority_value", "NON-PRIORITY");
-            ShipmentItemJsonModel shipmentItem = new ShipmentItemJsonModel("passport", "id_proof");
-
-            ShipmentJsonModel shipment = new ShipmentJsonModel();
-
-            ArrayList<ShipmentItemJsonModel> shipmentItemList = new ArrayList<ShipmentItemJsonModel>();
-            ArrayList<ShipmentAttributeJsonModel> shipmentAttributeList = new ArrayList<ShipmentAttributeJsonModel>();
+             ShipmentAttributeJsonModel shipmentAttribute1 = new ShipmentAttributeJsonModel("priority_value", "NON-PRIORITY");
+             ShipmentAttributeJsonModel shipmentAttribute2 = new ShipmentAttributeJsonModel("retry_count",String.valueOf(request.getRetryCount()));
+             shipmentAttributeList.add(shipmentAttribute1);
+             shipmentAttributeList.add(shipmentAttribute2);
 
 
-            shipmentItemList.add(shipmentItem);
+             for(Document doc : request.getDocument()) {
+                 ShipmentItemJsonModel shipmentItem = new ShipmentItemJsonModel(doc.getDocName(),doc.getDocType());
+                 shipmentItemList.add(shipmentItem);
+             }
+
+             ShipmentJsonModel shipment = new ShipmentJsonModel();
+
             shipment.setShipmentItems(shipmentItemList);
-
-            shipmentAttributeList.add(shipmentAttribute);
             shipment.setShipmentAttributes(shipmentAttributeList);
 
-            shipment.setShipmentType("RVP");
-            shipment.setPickupType("PICKUP_ONLY");
+            shipment.setShipmentType("DOC");
+            shipment.setPickupType("KYC");
             shipment.setShipmenttype("Incoming");
 
              newShipmentId = new AttributeHelper().getNewShipmentId("shipmentIDLatestValue");
-
 
              shipment.setShipmentId(newShipmentId);
             shipment.setOrderId(newShipmentId);
             shipment.setExternalTrackingId(newShipmentId);
 
-            shipment.setDeliveryCustomerAddress1(request.getCustomer().getAddress1());
-            shipment.setDeliveryCustomerAddress2(request.getCustomer().getAddress2());
-            shipment.setDeliveryCustomerCity(request.getCustomer().getCity());
-            shipment.setDeliveryCustomerCountry(request.getCustomer().getCountry());
-            shipment.setDeliveryCustomerEmail(request.getCustomer().getEmail());
-            shipment.setDeliveryCustomerName(request.getCustomer().getName());
-            shipment.setDeliveryCustomerPhone(request.getCustomer().getPhone());
-            shipment.setDeliveryCustomerPincode(request.getCustomer().getPinCode());
-            shipment.setDeliveryCustomerState(request.getCustomer().getState());
+            shipment.setDeliveryCustomerAddress1(request.getMerchant().getAddress1());
+            shipment.setDeliveryCustomerAddress2(request.getMerchant().getAddress2());
+            shipment.setDeliveryCustomerCity(request.getMerchant().getCity());
+            shipment.setDeliveryCustomerCountry(request.getMerchant().getCountry());
+            shipment.setDeliveryCustomerEmail(request.getMerchant().getEmail());
+            shipment.setDeliveryCustomerName(request.getMerchant().getName());
+            shipment.setDeliveryCustomerPhone(request.getMerchant().getPhone());
+            shipment.setDeliveryCustomerPincode(request.getMerchant().getPinCode());
+            shipment.setDeliveryCustomerState(request.getMerchant().getState());
 
-            shipment.setShippingCustomerAddress1(request.getMerchant().getAddress1());
-            shipment.setShippingCustomerCity(request.getMerchant().getCity());
-            shipment.setShippingCustomerCountry(request.getMerchant().getCountry());
-            shipment.setShippingCustomerName(request.getMerchant().getName());
-            shipment.setShippingCustomerPincode(request.getMerchant().getPinCode());
-            shipment.setShippingCustomerState(request.getMerchant().getState());
-            shipment.setShippingCustomerEmail(request.getMerchant().getEmail());
+            shipment.setShippingCustomerAddress1(request.getCustomer().getAddress1());
+            shipment.setShippingCustomerCity(request.getCustomer().getCity());
+            shipment.setShippingCustomerCountry(request.getCustomer().getCountry());
+            shipment.setShippingCustomerName(request.getCustomer().getName());
+            shipment.setShippingCustomerPincode(request.getCustomer().getPinCode());
+            shipment.setShippingCustomerState(request.getCustomer().getState());
+            shipment.setShippingCustomerEmail(request.getCustomer().getEmail());
 
             shipment.setOriginLocationName("fkl-bangalore");
 

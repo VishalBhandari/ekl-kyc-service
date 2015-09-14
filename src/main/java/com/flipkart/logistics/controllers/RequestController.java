@@ -24,111 +24,23 @@ public class RequestController {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/create-request")
+    @Path("/createServiceRequest")
 
     public Response createServiceRequest(String body) throws IOException {
 
-        ServiceRequest sr = new ServiceRequest();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode bodyNode = mapper.readTree(body);
-
-        JsonNode statusNode = bodyNode.findValue("merchant_ref_id");
-        sr.setMerchantRefId(statusNode.longValue());
-
-        statusNode = bodyNode.findValue("customer_json");
-         sr.setCustomerJson(mapper.writeValueAsString(statusNode));
-        statusNode = bodyNode.findValue("service");
-         sr.setService(mapper.writeValueAsString(statusNode));
-        statusNode = bodyNode.findValue("category");
-         sr.setCategory(mapper.writeValueAsString(statusNode));
-        statusNode = bodyNode.findValue("eta");
-         sr.setEta(mapper.writeValueAsString(statusNode));
-        statusNode = bodyNode.findValue("doc_json");
-         sr.setDocJson(mapper.writeValueAsString(statusNode));
-
-        new ServiceRequestHelper().addServiceRequesttoDb(sr);
-        createRequest(body,sr);
-        return Response.status(Response.Status.OK).build();
-
-
-    }
-
-    void createRequest(String body,ServiceRequest sr) throws IOException {
-        Request req = new Request();
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode bodyNode = mapper.readTree(body);
-
-        JsonNode statusNode = bodyNode.findValue("service");
-
-        String service_name = statusNode.textValue();
-        Service service = new ServiceHelper().getServiceByName(service_name);
-        statusNode = bodyNode.findValue("merchant_ref_id");
-        long merchantRefId = statusNode.asLong();
-
-        Merchant merchant = new OnboardingMerchantHelper().getMerchantById(merchantRefId);
-
-        statusNode = bodyNode.findValue("category");
-        String category_name = statusNode.textValue();
-        Category category = new CategoryHelper().getCategoryByName(category_name);
-
-        statusNode = bodyNode.findValue("eta");
-        String eta = statusNode.textValue();
-
-        Customer customer = new Customer();
-        JsonNode bodyNodeTemp = bodyNode.findValue("customer_json");
-        statusNode = bodyNodeTemp.findValue("name");
-        customer.setName(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("phone");
-        customer.setPhone(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("email");
-        customer.setEmail(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("address1");
-        customer.setAddress1(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("address2");
-        customer.setAddress2(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("city");
-        customer.setCity(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("state");
-        customer.setState(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("country");
-        customer.setCountry(statusNode.textValue());
-        statusNode = bodyNodeTemp.findValue("pincode");
-        customer.setPinCode(statusNode.textValue());
-
-        statusNode = bodyNode.findValue("doc_json");
-        Iterator<JsonNode> iterator1 = statusNode.elements();
-        Document doc;
-        HashSet<Document> documents = new HashSet<Document>();
-
-        while (iterator1.hasNext()) {
-            bodyNodeTemp = iterator1.next();
-            statusNode = bodyNodeTemp.findValue("doc_type");
-            String doc_type = statusNode.textValue();
-
-            statusNode = bodyNodeTemp.findValue("document");
-            Iterator<JsonNode> iterator2 = statusNode.elements();
-
-            while(iterator2.hasNext())
-            {
-                statusNode = iterator2.next();
-                String document = statusNode.textValue();
-                 doc = new Document(doc_type,document);
-                documents.add(doc);
-            }
-
+        if(body == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity("The json string is null").build();
         }
 
+        ServiceRequest serviceRequest = new ServiceRequestHelper().parseJsonRequest(body);
+        if(serviceRequest == null)
+            return Response.status(Response.Status.OK).entity("the merchant is not onboarded").build();
 
-        req.setDocument(documents);
-         req.setCategory(category);
-        req.setService(service);
-        req.setEta(eta);
-        req.setSr(sr);
-        req.setMerchant(merchant);
-        req.setStatus("PENDING");
-        req.setCustomer(customer);
-        new RequestHelper().addRequesttoDb(req);
+        new ServiceRequestHelper().addServiceRequesttoDb(serviceRequest);
+        String result = new RequestHelper().createAllRequest(body,serviceRequest);
+        return Response.status(Response.Status.OK).entity(result).build();
+
     }
 
     @GET
@@ -137,6 +49,9 @@ public class RequestController {
     public Response getServiceRequest( @PathParam("serviceRequestId") Long serviceRequestId) throws JsonProcessingException {
 
         ServiceRequest serviceRequest = new ServiceRequestHelper().getServiceRequestById(serviceRequestId);
+
+        if(serviceRequest == null)
+            return Response.status(Response.Status.OK).entity("ServiceRequestId is invalid").build();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(serviceRequest);
         return Response.status(Response.Status.OK).entity(jsonString).build();
@@ -146,9 +61,12 @@ public class RequestController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/getRequest/requestId/{requestId}")
-    public Response getRequest( @PathParam("requestId") Long requestId) throws JsonProcessingException {
+    public Response getRequest( @PathParam("requestId") String requestReferenceId) throws JsonProcessingException {
 
-        Request request = new RequestHelper().getRequestById(requestId);
+        Request request = new RequestHelper().getRequestById(requestReferenceId);
+
+        if(request == null || request.getActive() == 0)
+            return Response.status(Response.Status.OK).entity("RequestId is invalid").build();
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = "";
 
@@ -164,9 +82,12 @@ public class RequestController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/getDocument/requestId/{requestId}")
-    public Response getDocument( @PathParam("requestId") Long requestId) throws JsonProcessingException {
+    public Response getDocument( @PathParam("requestId") String requestReferenceId) throws JsonProcessingException {
 
-        Set<Document> documentSet  = new DocumentHelper().getDocumentListById(requestId);
+        Set<Document> documentSet  = new DocumentHelper().getDocumentListById(requestReferenceId);
+        if(documentSet == null)
+            return Response.status(Response.Status.OK).entity("RequestId is invalid").build();
+
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = "";
 
@@ -177,5 +98,133 @@ public class RequestController {
         }
         System.out.println(jsonString);
         return Response.status(Response.Status.OK).entity(jsonString).build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/deleteRequest/requestId/{requestId}")
+    public Response deleteMerchant( @PathParam("requestId") String requestReferenceId) throws JsonProcessingException {
+
+        boolean status = new RequestHelper().deleteRequestById(requestReferenceId);
+        if(status == true)
+            return Response.status(Response.Status.OK).entity("RequestId " +requestReferenceId+" is deleted"  ).build();
+        else
+            return Response.status(Response.Status.OK).entity("RequestId is not present").build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/updateRequest/requestId/{requestId}")
+
+    public Response updateRequest(String body,@PathParam("requestId") String requestReferenceId) throws IOException {
+
+        JsonNode bodyNode,statusNode,statusNode1,bodyNodeTemp;
+        Request request = new RequestHelper().getRequestById(requestReferenceId);
+        if(request== null || request.getActive()==0)
+            return Response.status(Response.Status.OK).entity("RequestId is not present").build();
+
+        ObjectMapper mapper = new ObjectMapper();
+        bodyNode = mapper.readTree(body);
+
+        statusNode = bodyNode.findValue("category");
+        if(statusNode!=null) {
+            Category category = new CategoryHelper().getCategoryByName(statusNode.textValue());
+            request.setCategory(category);
+        }
+
+        statusNode = bodyNode.findValue("retry_count");
+        if(statusNode!=null)
+            request.setRetryCount(statusNode.asLong());
+
+        statusNode = bodyNode.findValue("status");
+        if(statusNode!=null)
+            request.setStatus(statusNode.textValue());
+
+        statusNode =bodyNode.findValue("customer");
+        if(statusNode!=null)
+        {
+            Customer customer = new Customer();
+
+            statusNode1 = statusNode.findValue("name");
+            if(statusNode1!=null)
+            customer.setName(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("phone");
+            if(statusNode1!=null)
+            customer.setPhone(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("email");
+            if(statusNode1!=null)
+            customer.setEmail(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("address1");
+            if(statusNode1!=null)
+            customer.setAddress1(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("address2");
+            if(statusNode1!=null)
+            customer.setAddress2(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("city");
+            if(statusNode1!=null)
+            customer.setCity(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("state");
+            if(statusNode1!=null)
+            customer.setState(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("country");
+            if(statusNode1!=null)
+            customer.setCountry(statusNode1.textValue());
+
+            statusNode1 = statusNode.findValue("pincode");
+            if(statusNode1!=null)
+            customer.setPinCode(statusNode1.textValue());
+
+            request.setCustomer(customer);
+        }
+
+        statusNode = bodyNode.findValue("service");
+        if(statusNode!=null){
+            Service service = new ServiceHelper().getServiceByName(statusNode.textValue());
+            request.setService(service);
+        }
+
+        statusNode = bodyNode.findValue("expectedBy");
+        if(statusNode!=null)
+            request.setExpectedBy(statusNode.textValue());
+
+
+        statusNode = bodyNode.findValue("documents");
+        if(statusNode!=null)
+        {
+            Iterator<JsonNode> iterator1, iterator2;
+
+            iterator1 = statusNode.elements();
+            Document doc;
+            HashSet<Document> documents = new HashSet<Document>();
+
+            while (iterator1.hasNext()) {
+                bodyNodeTemp = iterator1.next();
+                statusNode1 = bodyNodeTemp.findValue("doc_type");
+                String doc_type = statusNode1.textValue();
+
+                statusNode1 = bodyNodeTemp.findValue("document");
+                iterator2 = statusNode1.elements();
+
+                while (iterator2.hasNext()) {
+                    bodyNodeTemp = iterator2.next();
+                    String document = bodyNodeTemp.textValue();
+                    doc = new Document(doc_type, document);
+                    documents.add(doc);
+                }
+
+            }
+            request.setDocument(documents);
+        }
+        new RequestHelper().updateRequest(request);
+
+        return Response.status(Response.Status.OK).entity("RequestId is updated " +
+                request.getRequestReferenceId()).build();
     }
 }

@@ -19,25 +19,19 @@ public class Merchant {
     private String state;
     private String country;
     private String pinCode;
-    private String create_datetime;
-    private String update_datetime;
+    private String createDateTime;
+    private String updateDateTime;
+    private String merchantReferenceId;
+    private int active;
     private Set<Category> category;
     private Set<Service>  service;
-
-    public Set<Service> getService() {
-        return service;
-    }
-
-    public void setService(Set<Service> service) {
-        this.service = service;
-    }
 
     public Merchant()
     {
 
     }
 
-    public Merchant(String name, String phone, String email, String address1, String address2, String city, String state, String country, String pinCode, String create_datetime, String update_datetime) {
+    public Merchant(String name, String phone, String email, String address1, String address2, String city, String state, String country, String pinCode, String createDateTime, String updateDateTime) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -47,8 +41,40 @@ public class Merchant {
         this.state = state;
         this.country = country;
         this.pinCode = pinCode;
-        this.create_datetime = create_datetime;
-        this.update_datetime = update_datetime;
+        this.createDateTime = createDateTime;
+        this.updateDateTime = updateDateTime;
+    }
+
+    public String getUpdateDateTime() {
+        return updateDateTime;
+    }
+
+    public void setUpdateDateTime(String updateDateTime) {
+        this.updateDateTime = updateDateTime;
+    }
+
+    public String getMerchantReferenceId() {
+        return merchantReferenceId;
+    }
+
+    public void setMerchantReferenceId(String merchantReferenceId) {
+        this.merchantReferenceId = merchantReferenceId;
+    }
+
+    public int getactive() {
+        return active;
+    }
+
+    public void setactive(int active) {
+        this.active = active;
+    }
+
+    public Set<Service> getService() {
+        return service;
+    }
+
+    public void setService(Set<Service> service) {
+        this.service = service;
     }
 
     public Set getCategory() {
@@ -58,8 +84,6 @@ public class Merchant {
     public void setCategory(Set category) {
         this.category = category;
     }
-
-
 
     public Long getId() {
         return id;
@@ -141,21 +165,12 @@ public class Merchant {
         this.pinCode = pinCode;
     }
 
-    public String getCreate_datetime() {
-        return create_datetime;
+    public String getCreateDateTime() {
+        return createDateTime;
     }
 
-    public void setCreate_datetime(String create_datetime) {
-        this.create_datetime = create_datetime;
+    public void setCreateDateTime(String createDateTime) {
+        this.createDateTime = createDateTime;
     }
-
-    public String getUpdate_datetime() {
-        return update_datetime;
-    }
-
-    public void setUpdate_datetime(String update_datetime) {
-        this.update_datetime = update_datetime;
-    }
-
 
 }
