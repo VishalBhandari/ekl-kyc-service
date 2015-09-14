@@ -73,7 +73,7 @@ public class RequestProcessController {
 
              shipment.setShipmentId(newShipmentId);
             shipment.setOrderId(newShipmentId);
-            shipment.setExternalTrackingId(newShipmentId);
+            shipment.setExternalTrackingId(request.getRequestReferenceId());
 
             shipment.setDeliveryCustomerAddress1(request.getMerchant().getAddress1());
             shipment.setDeliveryCustomerAddress2(request.getMerchant().getAddress2());

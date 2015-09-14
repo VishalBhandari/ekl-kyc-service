@@ -267,6 +267,7 @@ public class RequestHelper {
         try{
             tx = session.beginTransaction();
             request.setActive(0);
+            request.setStatus("CANCELLED");
             session.saveOrUpdate(request);
             tx.commit();
         }catch (HibernateException e) {
