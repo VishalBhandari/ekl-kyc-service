@@ -12,10 +12,6 @@ public class ServiceRequest {
     private String category;
     private String request;
 
-    public void setMerchantReferenceId(String merchantReferenceId) {
-        this.merchantReferenceId = merchantReferenceId;
-    }
-
     public  ServiceRequest()
     {
 
@@ -36,6 +32,10 @@ public class ServiceRequest {
 
     public String getMerchantReferenceId() {
         return merchantReferenceId;
+    }
+
+    public void setMerchantReferenceId(String merchantReferenceId) {
+        this.merchantReferenceId = merchantReferenceId;
     }
 
 

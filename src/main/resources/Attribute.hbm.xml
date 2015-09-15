@@ -11,7 +11,8 @@
         <id name="id" type="long" column="id">
             <generator class="native"/>
         </id>
-        <property name="key" column="key" type="string"/>
-        <property name="value" column="value" type="long" />
+        <property name="name" column="name" type="string" />
+        <property name="value" column="value" type="string"/>
+
     </class>
 </hibernate-mapping>

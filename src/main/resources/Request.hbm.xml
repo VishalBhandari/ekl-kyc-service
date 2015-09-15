@@ -20,7 +20,7 @@
                      class="com.flipkart.logistics.models.Service"/>
         <many-to-one name="category" column="category_id" unique="true" lazy="false"
                      class="com.flipkart.logistics.models.Category"/>
-        <set name="document" cascade="all" table="document_request_mapping">
+        <set name="document" cascade="all" table="document_request_mapping" lazy="false">
             <key column="request_id"></key>
             <many-to-many column="doc_id" lazy ="false" class="com.flipkart.logistics.models.Document"/>
         </set>

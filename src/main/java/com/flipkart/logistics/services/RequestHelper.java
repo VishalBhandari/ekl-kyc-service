@@ -3,6 +3,7 @@ package com.flipkart.logistics.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.logistics.models.*;
+import com.flipkart.logistics.utils.HibernateUtil;
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -18,43 +19,32 @@ import java.util.List;
  */
 public class RequestHelper {
 
-    private SessionFactory factory;
 
-    public Long addRequesttoDb(Request req)
+    public Long addRequest(Request request)
     {
-        Long request_id=0L;
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Long requestId=0L;
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
-            request_id = (Long)session.save(req);
-            tx.commit();
+            txn = session.beginTransaction();
+            requestId = (Long)session.save(request);
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
         }
-        return request_id;
+        return requestId;
     }
 
     public Request getRequestById(String requestReferenceId)    {
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Criteria c = session.createCriteria(Request.class);
-        c.add(Restrictions.eq("requestReferenceId", requestReferenceId));
-        Request request = (Request)c.uniqueResult();
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Request.class);
+        criteria.add(Restrictions.eq("requestReferenceId", requestReferenceId));
+        Request request = (Request)criteria.uniqueResult();
         session.close();
         if(request == null || request.getActive() == 0)
             return null;
@@ -64,52 +54,28 @@ public class RequestHelper {
 
     public List<Request> getPendingRequest()
     {
-        try
-        {
-            factory = new Configuration().configure().buildSessionFactory();
-        }catch (Throwable ex)
-        {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Criteria c = session.createCriteria(Request.class);
-        c.add(Restrictions.eq("status", "PENDING"));
-        return (List<Request>) c.list();
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Request.class);
+        criteria.add(Restrictions.eq("status", "PENDING"));
+        List<Request> requestList = (List<Request>) criteria.list();
+        session.close();
+        return requestList;
 
     }
 
-    public void setStatusAsProcessed(Request request)
+    public void updateStatus(Request request,String status)
     {
-        try {
-            //factory = new Configuration().configure().buildSessionFactory();
 
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
-            factory = configuration.buildSessionFactory(builder.build());
-
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        if (factory == null) {
-            // TODO: Throw error message
-        }
-
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
-            String hql = "update Request set status =:status" + " where id =:requestId";
-            Query query = session.createQuery(hql);
-            query.setParameter("status" , "SUBMITTED" );
-            query.setParameter("requestId", request.getId());
-            query.executeUpdate();
-            tx.commit();
+            txn = session.beginTransaction();
+            request.setStatus(status);
+            session.saveOrUpdate(request);
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
@@ -122,7 +88,7 @@ public class RequestHelper {
         Iterator<JsonNode> iterator1, iterator2, iterator3;
         JsonNode bodyNodeTemp, bodyNode, statusNode1, statusNode;
 
-        Request req = new Request();
+        Request request = new Request();
 
         ObjectMapper mapper = new ObjectMapper();
         bodyNode = mapper.readTree(body);
@@ -194,19 +160,19 @@ public class RequestHelper {
                 }
 
             }
-            req.setDocument(documents);
-            req.setCategory(category);
-            req.setService(service);
-            req.setExpectedBy(expectedBy);
-            req.setSr(sr);
-            req.setMerchant(merchant);
-            req.setStatus("PENDING");
-            req.setCustomer(customer);
-            req.setRetryCount(retryCount);
-            req.setActive(1);
-            addRequesttoDb(req);
-            setRequestReferenceId(req);
-            result = result + req.getRequestReferenceId() + "\t" + req.getCustomer().getName() + "\n";
+            request.setDocument(documents);
+            request.setCategory(category);
+            request.setService(service);
+            request.setExpectedBy(expectedBy);
+            request.setSr(sr);
+            request.setMerchant(merchant);
+            request.setStatus("PENDING");
+            request.setCustomer(customer);
+            request.setRetryCount(retryCount);
+            request.setActive(1);
+            addRequest(request);
+            setRequestReferenceId(request);
+            result = result + request.getRequestReferenceId() + "\t" + request.getCustomer().getName() + "\n";
 
         }
         return result;
@@ -214,34 +180,17 @@ public class RequestHelper {
 
     private void setRequestReferenceId(Request request) {
 
-        try {
-            //factory = new Configuration().configure().buildSessionFactory();
-
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
-            factory = configuration.buildSessionFactory(builder.build());
-
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        if (factory == null) {
-            // TODO: Throw error message
-        }
-
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
+            txn = session.beginTransaction();
 
             String requestReferenceId = "REQ" + String.format("%08d",request.getId());
             request.setRequestReferenceId(requestReferenceId);
             session.saveOrUpdate(request);
-            tx.commit();
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
@@ -250,28 +199,20 @@ public class RequestHelper {
 
     public boolean  deleteRequestById(String requestReferenceId) {
 
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
         Request request = getRequestById(requestReferenceId);
-        Session session = factory.openSession();
-
         if(request==null || request.getActive()==0)
             return false;
-
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
 
         try{
-            tx = session.beginTransaction();
+            txn = session.beginTransaction();
             request.setActive(0);
             request.setStatus("CANCELLED");
             session.saveOrUpdate(request);
-            tx.commit();
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
@@ -280,31 +221,15 @@ public class RequestHelper {
     }
 
     public void updateRequest(Request request) {
-        try {
-            //factory = new Configuration().configure().buildSessionFactory();
 
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
-            factory = configuration.buildSessionFactory(builder.build());
-
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        if (factory == null) {
-            // TODO: Throw error message
-        }
-
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
+            txn = session.beginTransaction();
             session.saveOrUpdate(request);
-            tx.commit();
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();

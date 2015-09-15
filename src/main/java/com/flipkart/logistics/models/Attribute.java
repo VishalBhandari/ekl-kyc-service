@@ -6,23 +6,23 @@ package com.flipkart.logistics.models;
 public class Attribute {
 
     long id;
-    String key;
-    long value;
+    String name;
+    String value;
 
-    public long getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getId() {

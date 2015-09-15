@@ -1,6 +1,7 @@
 package com.flipkart.logistics.services;
 
 import com.flipkart.logistics.models.Category;
+import com.flipkart.logistics.utils.HibernateUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,28 +14,13 @@ import org.hibernate.criterion.Restrictions;
  */
 public class CategoryHelper {
 
-    private SessionFactory factory = null;
     public Category getCategoryByName(String name)    {
-        try {
-            //factory = new Configuration().configure().buildSessionFactory();
 
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
-            factory = configuration.buildSessionFactory(builder.build());
-
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        if (factory == null) {
-            // TODO: Throw error message
-        }
-
-        Session session = factory.openSession();
-        Criteria c = session.createCriteria(Category.class);
-        c.add(Restrictions.eq(Category.CATEGORY_TYPE, name));
-        return (Category) c.uniqueResult();
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Category.class);
+        criteria.add(Restrictions.eq(Category.CATEGORY_TYPE, name));
+        Category category = (Category) criteria.uniqueResult();
+        session.close();
+        return category;
     }
 }

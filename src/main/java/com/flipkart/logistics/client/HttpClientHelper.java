@@ -22,8 +22,6 @@ public class HttpClientHelper {
         HttpPost request = new HttpPost(url);
         request.setHeader("Content-Type", "application/json");
         request.setHeader("Accept", "*/*");
-
-
         request.setEntity(postString);
         response = httpClient.execute(request);
         return response;

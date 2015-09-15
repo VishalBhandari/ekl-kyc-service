@@ -14,7 +14,6 @@ import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.LineFormatter;
-import org.apache.http.params.HttpParams;
 import org.eclipse.jetty.util.ajax.JSON;
 
 import javax.ws.rs.*;
@@ -61,57 +60,56 @@ public class RequestProcessController {
              }
 
              ShipmentJsonModel shipment = new ShipmentJsonModel();
+             shipment.setShipmentItems(shipmentItemList);
+             shipment.setShipmentAttributes(shipmentAttributeList);
 
-            shipment.setShipmentItems(shipmentItemList);
-            shipment.setShipmentAttributes(shipmentAttributeList);
+             shipment.setShipmentType("DOC");
+             shipment.setPickupType("KYC");
+             shipment.setShipmenttype("Incoming");
 
-            shipment.setShipmentType("DOC");
-            shipment.setPickupType("KYC");
-            shipment.setShipmenttype("Incoming");
+             newShipmentId = new AttributeHelper().createNewShipmentId("shipmentIDLatestValue");
 
-             newShipmentId = new AttributeHelper().getNewShipmentId("shipmentIDLatestValue");
+             shipment.setShipmentId(request.getRequestReferenceId());
+             shipment.setOrderId(newShipmentId);
+             shipment.setExternalTrackingId(newShipmentId);
 
-             shipment.setShipmentId(newShipmentId);
-            shipment.setOrderId(newShipmentId);
-            shipment.setExternalTrackingId(request.getRequestReferenceId());
+             shipment.setDeliveryCustomerAddress1(request.getMerchant().getAddress1());
+             shipment.setDeliveryCustomerAddress2(request.getMerchant().getAddress2());
+             shipment.setDeliveryCustomerCity(request.getMerchant().getCity());
+             shipment.setDeliveryCustomerCountry(request.getMerchant().getCountry());
+             shipment.setDeliveryCustomerEmail(request.getMerchant().getEmail());
+             shipment.setDeliveryCustomerName(request.getMerchant().getName());
+             shipment.setDeliveryCustomerPhone(request.getMerchant().getPhone());
+             shipment.setDeliveryCustomerPincode(request.getMerchant().getPinCode());
+             shipment.setDeliveryCustomerState(request.getMerchant().getState());
 
-            shipment.setDeliveryCustomerAddress1(request.getMerchant().getAddress1());
-            shipment.setDeliveryCustomerAddress2(request.getMerchant().getAddress2());
-            shipment.setDeliveryCustomerCity(request.getMerchant().getCity());
-            shipment.setDeliveryCustomerCountry(request.getMerchant().getCountry());
-            shipment.setDeliveryCustomerEmail(request.getMerchant().getEmail());
-            shipment.setDeliveryCustomerName(request.getMerchant().getName());
-            shipment.setDeliveryCustomerPhone(request.getMerchant().getPhone());
-            shipment.setDeliveryCustomerPincode(request.getMerchant().getPinCode());
-            shipment.setDeliveryCustomerState(request.getMerchant().getState());
+             shipment.setShippingCustomerAddress1(request.getCustomer().getAddress1());
+             shipment.setShippingCustomerCity(request.getCustomer().getCity());
+             shipment.setShippingCustomerCountry(request.getCustomer().getCountry());
+             shipment.setShippingCustomerName(request.getCustomer().getName());
+             shipment.setShippingCustomerPincode(request.getCustomer().getPinCode());
+             shipment.setShippingCustomerState(request.getCustomer().getState());
+             shipment.setShippingCustomerEmail(request.getCustomer().getEmail());
 
-            shipment.setShippingCustomerAddress1(request.getCustomer().getAddress1());
-            shipment.setShippingCustomerCity(request.getCustomer().getCity());
-            shipment.setShippingCustomerCountry(request.getCustomer().getCountry());
-            shipment.setShippingCustomerName(request.getCustomer().getName());
-            shipment.setShippingCustomerPincode(request.getCustomer().getPinCode());
-            shipment.setShippingCustomerState(request.getCustomer().getState());
-            shipment.setShippingCustomerEmail(request.getCustomer().getEmail());
-
-            shipment.setOriginLocationName("fkl-bangalore");
-
-
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(shipment);
+             shipment.setOriginLocationName("fkl-bangalore");
 
 
-            HttpClientHelper client = new HttpClientHelper();
-            HttpResponse response = null;
-            try {
+             ObjectMapper mapper = new ObjectMapper();
+             String jsonString = mapper.writeValueAsString(shipment);
+
+
+             HttpClientHelper client = new HttpClientHelper();
+             HttpResponse response = null;
+             try {
                 response = client.postRequest("http://flo-fkl-app2.stage.ch.flipkart.com:27012/fsd-external-apis/shipments/create-shipment", jsonString);
-            } catch (Exception e) {
+             } catch (Exception e) {
                 System.out.println(e.getMessage());
-            }
+             }
 
              if(response.getStatusLine().getStatusCode() == 201)
              {
-                 //request.setStatus("WIP");
-                 new RequestHelper().setStatusAsProcessed(request);
+
+                 new RequestHelper().updateStatus(request,"SUBMITTED");
              }
 
         }

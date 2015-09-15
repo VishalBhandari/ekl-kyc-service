@@ -6,6 +6,7 @@ import java.util.Date;
  * Created by vishal.bhandari on 28/08/15.
  */
 public class ShipmentFormDetail {
+
     private Long id;
     private String shipmentId;
     private String name;
@@ -13,6 +14,7 @@ public class ShipmentFormDetail {
     private Date createdAt;
     private Date updatedAt;
     private Long shipmentItemSeqId;
+
     public Long getId() {
         return id;
     }

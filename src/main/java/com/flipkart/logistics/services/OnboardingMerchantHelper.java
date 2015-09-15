@@ -3,6 +3,7 @@ package com.flipkart.logistics.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.logistics.models.*;
+import com.flipkart.logistics.utils.HibernateUtil;
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -19,56 +20,41 @@ import java.util.Iterator;
  */
 public class OnboardingMerchantHelper {
 
-    private SessionFactory factory;
-
     public Merchant getMerchantByName(String name)    {
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Criteria c = session.createCriteria(Merchant.class);
-        c.add(Restrictions.and(Restrictions.eq(Merchant.NAME, name), Restrictions.eq("active", 1)));
-        return (Merchant) c.uniqueResult();
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Merchant.class);
+        criteria.add(Restrictions.and(Restrictions.eq(Merchant.NAME, name), Restrictions.eq("active", 1)));
+        Merchant merchant = (Merchant) criteria.uniqueResult();
+        session.close();
+        return merchant;
     }
 
-    public Long addMerchanttoDb(Merchant m)
+    public Long addMerchant(Merchant m)
     {
-        Long merchant_id=0L;
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Long merchantId=0L;
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
-            merchant_id = (Long)session.save(m);
-            tx.commit();
+            txn = session.beginTransaction();
+            merchantId = (Long)session.save(m);
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
         }
-        return merchant_id;
+        return merchantId;
     }
 
     public Merchant getMerchantById(String merchantReferenceId)    {
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Criteria c = session.createCriteria(Merchant.class);
-        c.add(Restrictions.eq("merchantReferenceId", merchantReferenceId));
-        Merchant merchant = (Merchant) c.uniqueResult();
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Merchant.class);
+        criteria.add(Restrictions.eq("merchantReferenceId", merchantReferenceId));
+        Merchant merchant = (Merchant) criteria.uniqueResult();
         session.close();
         if(merchant==null || merchant.getactive() == 0 )
         return null;
@@ -77,27 +63,23 @@ public class OnboardingMerchantHelper {
     }
 
     public boolean deleteMerchantById(String merchantReferenceId)    {
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
+
         Merchant merchant = getMerchantById(merchantReferenceId);
-        Session session = factory.openSession();
+
 
         if(merchant==null || merchant.getactive()==0)
             return false;
 
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
 
         try{
-            tx = session.beginTransaction();
+            txn = session.beginTransaction();
             merchant.setactive(0);
             session.saveOrUpdate(merchant);
-            tx.commit();
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
@@ -167,78 +149,34 @@ public class OnboardingMerchantHelper {
 
     public void setMerchantReferenceId(Merchant merchant) {
 
-        try {
-            //factory = new Configuration().configure().buildSessionFactory();
-
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
-            factory = configuration.buildSessionFactory(builder.build());
-
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        if (factory == null) {
-            // TODO: Throw error message
-        }
-
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
+            txn = session.beginTransaction();
 
             String merchantReferenceId = "MER" + String.format("%08d",merchant.getId());
-
-            // String hql = "update Merchant set merchant_reference_id =:newvalue where id =:merchantId";
-
-            // Query query = session.createQuery(hql);
-            // query.setParameter("newvalue" , MerchantReferenceId );
-            // query.setParameter("merchantId", merchant.getId());
-            // query.executeUpdate();
-
             merchant.setMerchantReferenceId(merchantReferenceId);
             session.saveOrUpdate(merchant);
-            tx.commit();
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
         }
 
-
-
     }
 
     public void updateMerchant(Merchant merchant) {
 
-        try {
-            //factory = new Configuration().configure().buildSessionFactory();
-
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
-            factory = configuration.buildSessionFactory(builder.build());
-
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        if (factory == null) {
-            // TODO: Throw error message
-        }
-
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
+            txn = session.beginTransaction();
             session.saveOrUpdate(merchant);
-            tx.commit();
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();

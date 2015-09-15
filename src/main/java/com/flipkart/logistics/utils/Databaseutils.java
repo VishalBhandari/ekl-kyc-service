@@ -9,8 +9,4 @@ import org.hibernate.cfg.Configuration;
 public class Databaseutils {
 
 
-
-
-
-
 }

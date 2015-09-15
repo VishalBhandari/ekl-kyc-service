@@ -37,7 +37,7 @@ public class RequestController {
         if(serviceRequest == null)
             return Response.status(Response.Status.OK).entity("the merchant is not onboarded").build();
 
-        new ServiceRequestHelper().addServiceRequesttoDb(serviceRequest);
+        new ServiceRequestHelper().addServiceRequest(serviceRequest);
         String result = new RequestHelper().createAllRequest(body,serviceRequest);
         return Response.status(Response.Status.OK).entity(result).build();
 

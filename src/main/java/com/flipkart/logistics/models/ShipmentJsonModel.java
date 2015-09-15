@@ -11,13 +11,7 @@ public class ShipmentJsonModel {
 
     private String shipmentType;
 
-    public String getShipmenttype() {
-        return shipment_type;
-    }
 
-    public void setShipmenttype(String shipment_type) {
-        this.shipment_type = shipment_type;
-    }
 
     private String shipment_type;
     private String pickupType;
@@ -43,21 +37,26 @@ public class ShipmentJsonModel {
     private String shippingCustomerPincode;
     private String shippingCustomerEmail;
 
-
     private String originLocationName;
-
 
     private ArrayList<ShipmentItemJsonModel> shipmentItems;
     private ArrayList<ShipmentAttributeJsonModel> shipmentAttributes;
 
-
-
     private String merchantName;
 
+
+    public String getShipmenttype() {
+        return shipment_type;
+    }
+
+    public void setShipmenttype(String shipment_type) {
+        this.shipment_type = shipment_type;
+    }
 
     public ArrayList<ShipmentAttributeJsonModel> getShipmentAttributes() {
         return shipmentAttributes;
     }
+
     public void setShipmentAttributes(
             ArrayList<ShipmentAttributeJsonModel> shipmentAttributes) {
         this.shipmentAttributes = shipmentAttributes;

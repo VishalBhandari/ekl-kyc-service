@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.logistics.models.Merchant;
 import com.flipkart.logistics.models.ServiceRequest;
+import com.flipkart.logistics.utils.HibernateUtil;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
@@ -16,43 +17,33 @@ import java.io.IOException;
  */
 public class ServiceRequestHelper {
 
-    private SessionFactory factory;
-
-    public Long addServiceRequesttoDb(ServiceRequest sr)
+    public Long addServiceRequest(ServiceRequest serviceRequest)
     {
-        Long servicerequest_id=0L;
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Transaction tx = null;
+        Long serviceRequestId=0L;
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Transaction txn = null;
         try{
-            tx = session.beginTransaction();
-            servicerequest_id = (Long)session.save(sr);
-            tx.commit();
+            txn = session.beginTransaction();
+            serviceRequestId = (Long)session.save(serviceRequest);
+            txn.commit();
         }catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (txn!=null) txn.rollback();
             e.printStackTrace();
         }finally {
             session.close();
         }
-        return servicerequest_id;
+        return serviceRequestId;
     }
 
     public ServiceRequest getServiceRequestById(Long ServiceRequestId)    {
-        try {
-            factory = new Configuration().configure().buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-        Session session = factory.openSession();
-        Criteria c = session.createCriteria(ServiceRequest.class);
-        c.add(Restrictions.eq("id", ServiceRequestId));
-        return (ServiceRequest) c.uniqueResult();
+
+        Session session = HibernateUtil.getInstance().getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(ServiceRequest.class);
+        criteria.add(Restrictions.eq("id", ServiceRequestId));
+        ServiceRequest serviceRequest = (ServiceRequest) criteria.uniqueResult();
+        session.close();
+        return serviceRequest;
     }
 
     public ServiceRequest parseJsonRequest(String body) throws IOException {

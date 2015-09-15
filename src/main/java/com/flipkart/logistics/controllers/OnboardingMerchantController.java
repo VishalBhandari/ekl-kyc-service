@@ -38,7 +38,7 @@ public class OnboardingMerchantController {
         if (merchant == null || merchant.getactive()==0) /* new merchant */
         {
             merchant = new OnboardingMerchantHelper().parseJsonMerchant(body);
-            new OnboardingMerchantHelper().addMerchanttoDb(merchant);
+            new OnboardingMerchantHelper().addMerchant(merchant);
             /* set merchant reference id */
             new OnboardingMerchantHelper().setMerchantReferenceId(merchant);
             return Response.status(Response.Status.OK).entity("Merchant is onboarded " +
