@@ -1,31 +1,20 @@
 package com.flipkart.logistics.controllers;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.flipkart.logistics.client.HttpClientHelper;
 import com.flipkart.logistics.models.*;
 import com.flipkart.logistics.services.AttributeHelper;
 import com.flipkart.logistics.services.RequestHelper;
-import org.apache.http.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.LineFormatter;
-import org.eclipse.jetty.util.ajax.JSON;
+import org.apache.http.HttpResponse;
 
-import javax.ws.rs.*;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by vishal.bhandari on 28/08/15.

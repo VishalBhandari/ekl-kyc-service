@@ -1,6 +1,7 @@
 package com.flipkart.logistics.services;
 
-import com.yammer.dropwizard.config.Configuration;
+import io.dropwizard.Configuration;
+
 
 /**
  * Created by vishal.bhandari on 17/08/15.
