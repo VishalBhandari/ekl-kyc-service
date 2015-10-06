@@ -13,7 +13,7 @@ import io.dropwizard.setup.Environment;
  */
 public class MainService extends Application<ConfigurationService> {
 
-    public static void main(String[] args) {
+    public static void   main(String[] args) {
         try {
             new MainService().run(args);
         } catch (Exception e) {

@@ -1,3 +1,13 @@
-http:
- port: 8080
- adminPort: 8081
+#server:
+ # type: simple
+  #applicationConnectors:
+   # type: http
+    #port: 8080
+
+server:
+  type: simple
+  applicationContextPath: /application
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: 8080
