@@ -22,12 +22,11 @@ import java.util.Iterator;
  * Created by vishal.bhandari on 18/08/15.
  */
 @Path("/flipkart/merchant")
+@Produces(MediaType.APPLICATION_JSON)
 public class OnboardingMerchantController {
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/createMerchant")
-
     public Response createMerchant(String body) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -53,8 +52,8 @@ public class OnboardingMerchantController {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/getMerchant/merchantId/{merchantId}")
+
     public Response getMerchant( @PathParam("merchantId") String merchantReferenceId) throws JsonProcessingException {
 
         if (merchantReferenceId == null) {
@@ -69,8 +68,8 @@ public class OnboardingMerchantController {
     }
 
     @POST
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/deleteMerchant/merchantId/{merchantId}")
+
     public Response deleteMerchant( @PathParam("merchantId") String merchantReferenceId) throws JsonProcessingException {
 
         boolean status = new OnboardingMerchantHelper().deleteMerchantById(merchantReferenceId);
@@ -82,7 +81,7 @@ public class OnboardingMerchantController {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/updateMerchant/merchantId/{merchantId}")
+
 
     public Response updateMerchant(String body,@PathParam("merchantId") String merchantReferenceId) throws IOException
     {
